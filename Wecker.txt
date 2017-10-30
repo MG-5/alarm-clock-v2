@@ -1,0 +1,10 @@
+ToDo-Liste
+
+Software:
+	-LED Controller	
+
+Hardware:
+	-Rauchmelder
+	
+Interrupts:
+	-Rauchmelder
