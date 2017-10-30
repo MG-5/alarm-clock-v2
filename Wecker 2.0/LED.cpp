@@ -11,7 +11,7 @@
 #include "math.h"
 #include "timer0.h"
 
-#define LED_UPDATETIME 30000 //halbe Minute
+#define LED_UPDATETIME 15000 //every 15 seconds
 #define LED_A1 PIND4 //D4
 #define LED_A2 PIND5 //D5
 #define LED_TURN_ON_OFF_DELAY 3
@@ -93,16 +93,6 @@ void LED(uint8_t red, uint8_t green, uint8_t blue)
 		TCCR2A |= (1 << COM1A1); //PWM aktivieren
 		GREEN_PIN = green;
 	}
-
-	/*
-	Serial.print("RGB:");
-	Serial.print(red);
-	Serial.print(",");
-	Serial.print(green);
-	Serial.print(",");
-	Serial.print(blue);
-	Serial.println();
-	*/
 }
 
 void LED_with_factor(RGB_vector &vector)
@@ -136,54 +126,36 @@ RGB_vector LED_with_factor_noChange(uint8_t red, uint8_t green, uint8_t blue, ui
 
 	if (currentPercent == 0)
 	{
-		float smVal; //kleinster Wert
+		uint8_t smVal; //kleinster Wert
 		if (red != 0)
-		smVal = red;
+		{
+			smVal = red;
+		}
 		else if (green != 0)
-		smVal = green;
+		{
+			smVal = green;
+		}
 		else if (blue != 0)
-		smVal = blue;
+		{
+			smVal = blue;
+		}
 		if (green < smVal && green != 0)
-		smVal = green;
+		{
+			smVal = green;
+		}
 		if (blue < smVal && blue != 0)
-		smVal = blue;
+		{
+			smVal = blue;
+		}
 
-		factor = 1 / smVal;
+		factor = 1 / (float)smVal;
 	}
 	else
 	{
-		factor = currentPercent / 100.0F;
+		factor = ((currentPercent/100.0f)*255) / 255.0F;
 	}
 
-	return{ trunc(red * factor), trunc(green * factor), trunc(blue * factor) };
-}
-
-RGB_vector LED_with_factor_NEW(uint8_t red, uint8_t green, uint8_t blue, uint8_t currentPercent)
-{
-	float factor;
-
-	if (currentPercent == 0)
-	{
-		float smVal; //kleinster Wert
-		if (red != 0)
-		smVal = red;
-		else if (green != 0)
-		smVal = green;
-		else if (blue != 0)
-		smVal = blue;
-		if (green < smVal && green != 0)
-		smVal = green;
-		if (blue < smVal && blue != 0)
-		smVal = blue;
-
-		factor = 1 / smVal;
-	}
-	else
-	{
-		factor = currentPercent / 255.0F;
-	}
-
-	return{ trunc(red * factor), trunc(green * factor), trunc(blue * factor) };
+	return{ round(red * factor), round(green * factor), round(blue * factor) };
 }
 
 void LED_sequence()
@@ -192,16 +164,11 @@ void LED_sequence()
 	{
 		prevTime3 = millis();
 
-		//Serial.println();
-		//Serial.print(LED_timer);
-		//Serial.println();
-		//printClock(t);
-		//Serial.println();
 
 		LED_sunset(LED_timer);
 		LED_timer++;
 	}
-	if (LED_timer > 60)
+	if (LED_timer > 120)
 	{
 		currentState = States::CLOCK;
 		counter = 0;
@@ -212,10 +179,14 @@ void LED_sequence()
 		seconds = 0;
 
 		if (alarmState == AlarmStates::ALARM1_LED)
-		alarmState = AlarmStates::ALARM1_VIBR;
+		{
+			alarmState = AlarmStates::ALARM1_VIBR;
+		}
 
 		else if (alarmState == AlarmStates::ALARM2_LED)
-		alarmState = AlarmStates::ALARM2_VIBR;
+		{
+			alarmState = AlarmStates::ALARM2_VIBR;
+		}
 	}
 }
 
@@ -226,7 +197,9 @@ void LED_sunset(uint8_t timer)
 		LED_currentColor.red++;
 	}
 	else if (timer < 15)
-	LED_currentColor.red += 2;
+	{
+		LED_currentColor.red += 2;
+	}
 	else if (timer < 21)
 	{
 		LED_currentColor.red += 2;
@@ -326,7 +299,7 @@ void turnOffLED()
 	LED_turningColor = LED_with_factor_noChange(LED_lastColor, LED_percent);
 	prevTime3 = 0;
 	currentSwitch = Switching_States::TURNING_OFF;
-	LED_turnPercent = 255;
+	LED_turnPercent = 100;
 
 	if (counter > 5)
 	counter = 5;
@@ -340,8 +313,8 @@ void turningOn()
 	if ((millis() - prevTime3) >= LED_TURN_ON_OFF_DELAY)
 	{
 		prevTime3 = millis();
-		LED(LED_with_factor_NEW(LED_turningColor.red, LED_turningColor.green, LED_turningColor.blue, LED_turnPercent));
-		if (LED_turnPercent >= 255)
+		LED(LED_with_factor_noChange(LED_turningColor.red, LED_turningColor.green, LED_turningColor.blue, LED_turnPercent));
+		if (LED_turnPercent >= 100)
 		{
 			currentSwitch = Switching_States::NO;
 			LED_Power = true;
@@ -357,7 +330,7 @@ void turningOff()
 	if ((millis() - prevTime3) >= LED_TURN_ON_OFF_DELAY)
 	{
 		prevTime3 = millis();
-		LED(LED_with_factor_NEW(LED_turningColor.red, LED_turningColor.green, LED_turningColor.blue, LED_turnPercent));
+		LED(LED_with_factor_noChange(LED_turningColor.red, LED_turningColor.green, LED_turningColor.blue, LED_turnPercent));
 		LED_turnPercent--;
 		if (LED_turnPercent <= 0)
 		{
@@ -414,73 +387,73 @@ void fadingColor()
 	}
 }
 
-void LED_bla()
+void LED_effects()
 {
-if (LED_State != LED_States::NORMAL && LED_Power)
-{
-	switch (LED_State)
+	if (LED_State != LED_States::NORMAL && LED_Power)
 	{
-		case LED_States::JUMP3:
-		if ((millis() - prevTime3) >= LED_speed)
+		switch (LED_State)
 		{
-			prevTime3 = millis();
+			case LED_States::JUMP3:
+			if ((millis() - prevTime3) >= LED_speed)
+			{
+				prevTime3 = millis();
 
-			if (currentColor == Color_States::WHITE || currentColor == Color_States::BLUE)
-			{
-				currentColor = Color_States::RED;
-				LED_with_factor(255, 0, 0);
+				if (currentColor == Color_States::WHITE || currentColor == Color_States::BLUE)
+				{
+					currentColor = Color_States::RED;
+					LED_with_factor(255, 0, 0);
+				}
+				else if (currentColor == Color_States::RED)
+				{
+					currentColor = Color_States::GREEN;
+					LED_with_factor(0, 255, 0);
+				}
+				else if (currentColor == Color_States::GREEN)
+				{
+					currentColor = Color_States::BLUE;
+					LED_with_factor(0, 0, 255);
+				}
 			}
-			else if (currentColor == Color_States::RED)
+			break;
+
+			case LED_States::JUMP7:
+			if ((millis() - prevTime3) >= LED_speed)
 			{
-				currentColor = Color_States::GREEN;
-				LED_with_factor(0, 255, 0);
+				prevTime3 = millis();
+
+				if (currentColor == Color_States::WHITE || currentColor == Color_States::PURPLE)
+				{
+					currentColor = Color_States::RED;
+					LED_with_factor(255, 0, 0);
+				}
+				else if (currentColor == Color_States::RED)
+				{
+					currentColor = Color_States::YELLOW;
+					LED_with_factor(255, 255, 0);
+				}
+				else if (currentColor == Color_States::YELLOW)
+				{
+					currentColor = Color_States::GREEN;
+					LED_with_factor(0, 255, 0);
+				}
+				else if (currentColor == Color_States::GREEN)
+				{
+					currentColor = Color_States::TUERKIS;
+					LED_with_factor(0, 255, 255);
+				}
+				else if (currentColor == Color_States::TUERKIS)
+				{
+					currentColor = Color_States::BLUE;
+					LED_with_factor(0, 0, 255);
+				}
+				else if (currentColor == Color_States::BLUE)
+				{
+					currentColor = Color_States::PURPLE;
+					LED_with_factor(255, 0, 255);
+				}
 			}
-			else if (currentColor == Color_States::GREEN)
-			{
-				currentColor = Color_States::BLUE;
-				LED_with_factor(0, 0, 255);
-			}
+			break;
 		}
-		break;
-
-		case LED_States::JUMP7:
-		if ((millis() - prevTime3) >= LED_speed)
-		{
-			prevTime3 = millis();
-
-			if (currentColor == Color_States::WHITE || currentColor == Color_States::PURPLE)
-			{
-				currentColor = Color_States::RED;
-				LED_with_factor(255, 0, 0);
-			}
-			else if (currentColor == Color_States::RED)
-			{
-				currentColor = Color_States::YELLOW;
-				LED_with_factor(255, 255, 0);
-			}
-			else if (currentColor == Color_States::YELLOW)
-			{
-				currentColor = Color_States::GREEN;
-				LED_with_factor(0, 255, 0);
-			}
-			else if (currentColor == Color_States::GREEN)
-			{
-				currentColor = Color_States::TUERKIS;
-				LED_with_factor(0, 255, 255);
-			}
-			else if (currentColor == Color_States::TUERKIS)
-			{
-				currentColor = Color_States::BLUE;
-				LED_with_factor(0, 0, 255);
-			}
-			else if (currentColor == Color_States::BLUE)
-			{
-				currentColor = Color_States::PURPLE;
-				LED_with_factor(255, 0, 255);
-			}
-		}
-		break;
 	}
-}
 }
 

@@ -241,6 +241,12 @@
     <Compile Include="TM1637Display.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="uart.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="uart.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="weckerEnums.h">
       <SubType>compile</SubType>
     </Compile>

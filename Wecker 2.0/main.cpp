@@ -185,15 +185,23 @@ int main(void)
 				if (alarmState == AlarmStates::OFF)
 				{
 					if (counter < 5)
-					showAlarmLED(alarmMode);
+					{
+						showAlarmLED(alarmMode);
+					}
 				}
 				else if (blinkState)
-				showAlarmLED(alarmMode);
+				{
+					showAlarmLED(alarmMode);
+				}
 				else
-				showAlarmLED(AlarmModes::INACTIVE);
+				{
+					showAlarmLED(AlarmModes::INACTIVE);
+				}
 
 				if (counter <= 15 && alarmState != AlarmStates::ALARM1_VIBR && alarmState != AlarmStates::ALARM2_VIBR)
-				counter++;
+				{
+					counter++;
+				}
 
 				clock(t, blinkState);
 
@@ -201,7 +209,6 @@ int main(void)
 				//printClock(t);
 				//Serial.println();
 			}
-
 			break;
 
 			case States::STANDBY:
@@ -464,8 +471,6 @@ int main(void)
 
 		#pragma endregion
 
-
-
 		#pragma region AlarmZustand
 		switch (alarmState)
 		{
@@ -486,13 +491,14 @@ int main(void)
 		}
 		#pragma endregion
 
-		//TODO: Funktionsnamen ausdenken
-		LED_bla();
+		LED_effects();
 
 		#pragma region Buttoneingänge überprüfen
 		//snooze
 		if (snooze.state != 0)
-		snooze.tick();
+		{
+			snooze.tick();
+		}
 
 		if (check_bit(interruptFlags, 0))
 		{
@@ -502,7 +508,9 @@ int main(void)
 
 		//button1
 		if (button1.state != 0)
-		button1.tick();
+		{
+			button1.tick();
+		}
 
 		if (check_bit(interruptFlags, 1))
 		{
@@ -512,7 +520,9 @@ int main(void)
 
 		//button2
 		if (button2.state != 0)
-		button2.tick();
+		{
+			button2.tick();
+		}
 
 		if (check_bit(interruptFlags, 2))
 		{

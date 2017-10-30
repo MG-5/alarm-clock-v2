@@ -1,4 +1,9 @@
 /*
+Version 2.2
+-change sunset - after 15min led strip has full brightness now
+-add some braces 
+
+
 Version 2.1 - 
 -change thermometer parameter from float to uint8_t
 -fix blink state (DISPLAY_ALARM2 -> CLOCK)

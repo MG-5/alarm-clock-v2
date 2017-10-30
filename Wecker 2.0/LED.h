@@ -49,7 +49,7 @@ void fadeToColor(uint8_t red, uint8_t green, uint8_t blue);
 //help function to fade LED to another color
 void fadingColor();
 
-//TODO: Namen ausdenken
-void LED_bla();
+//function to apply effects on LED strip
+void LED_effects();
 
 #endif /* LED_H_ */
