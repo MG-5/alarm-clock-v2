@@ -1,10 +1,10 @@
 /*
 Version 2.2
 -change sunset - after 15min led strip has full brightness now
--add some braces 
+-add some braces
 
 
-Version 2.1 - 
+Version 2.1 -
 -change thermometer parameter from float to uint8_t
 -fix blink state (DISPLAY_ALARM2 -> CLOCK)
 
@@ -62,7 +62,6 @@ Version 1.1 -  01. Juni 2016
 Version 1.0 - 29. Mai 2016
 */
 
-
 #ifndef MAIN_H_
 #define MAIN_H_
 
@@ -79,15 +78,14 @@ void vibrate(bool vibr);
 void vibration_sequence();
 uint8_t adjustHour(uint8_t hour);
 uint8_t adjustMinute(uint8_t min);
-//void printClock(Time t);
-//void printDate(Date t);
+// void printClock(Time t);
+// void printDate(Date t);
 
 void saveStatistics();
 void updateEEPROM(uint8_t index, uint8_t value);
 uint16_t readSavedValue(uint8_t index);
 
-//void showStartMessages();
+// void showStartMessages();
 void IREvent(uint8_t protocol, uint16_t address, uint32_t command);
-
 
 #endif /* MAIN_H_ */

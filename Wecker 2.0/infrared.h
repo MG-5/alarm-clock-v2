@@ -3,7 +3,7 @@
  *
  * Created: 17.04.2017 00:00:22
  *  Author: Maxi
- */ 
+ */
 
 #ifndef INFRARED_H_
 #define INFRARED_H_

@@ -19,22 +19,23 @@
 
 #include <stdint.h>
 
-#define SEG_A   0b00000001
-#define SEG_B   0b00000010
-#define SEG_C   0b00000100
-#define SEG_D   0b00001000
-#define SEG_E   0b00010000
-#define SEG_F   0b00100000
-#define SEG_G   0b01000000
-#define SEG_DP  0b10000000
+#define SEG_A 0b00000001
+#define SEG_B 0b00000010
+#define SEG_C 0b00000100
+#define SEG_D 0b00001000
+#define SEG_E 0b00010000
+#define SEG_F 0b00100000
+#define SEG_G 0b01000000
+#define SEG_DP 0b10000000
 
-class TM1637Display {
+class TM1637Display
+{
 
 public:
   //! Initialize a TM1637Display object, setting the clock and
   //! data pins.
   TM1637Display();
-  
+
   //! Sets the brightness of the display.
   //!
   //! The setting takes effect when a command is given to change the data being
@@ -42,7 +43,7 @@ public:
   //!
   //! @param brightness A number from 0 (lowes brightness) to 7 (highest brightness)
   void setBrightness(uint8_t brightness);
-  
+
   //! Display arbitrary data on the module
   //!
   //! This function receives raw segment values as input and displays them. The segment data
@@ -55,8 +56,9 @@ public:
   //! @param segments An array of size @ref length containing the raw segment values
   //! @param length The number of digits to be modified
   //! @param pos The position from which to start the modification (0 - leftmost, 3 - rightmost)
-  void setSegments(const uint8_t digit0, const uint8_t digit1, const uint8_t digit2, const uint8_t digit3);
-  
+  void setSegments(const uint8_t digit0, const uint8_t digit1, const uint8_t digit2,
+                   const uint8_t digit3);
+
   //! Displayes a decimal number
   //!
   //! Dispalyes the given argument as a decimal number
@@ -68,9 +70,9 @@ public:
   //!        fits to the number of digits requested (for example, if two digits are to be displayed,
   //!        the number must be between 0 to 99)
   //! @param pos The position least significant digit (0 - leftmost, 3 - rightmost)
-  
-  //void showNumberDec(int num, bool leading_zero = false, uint8_t length = 4, uint8_t pos = 0);
-  
+
+  // void showNumberDec(int num, bool leading_zero = false, uint8_t length = 4, uint8_t pos = 0);
+
   //! Translate a single digit into 7 segment code
   //!
   //! The method accepts a number between 0 - 15 and converts it to the
@@ -83,18 +85,18 @@ public:
   uint8_t encodeDigit(uint8_t digit);
 
 protected:
-   void bitDelay();
-   
-   void start();
-   
-   void stop();
-   
-   bool writeByte(uint8_t b);
-   
+  void bitDelay();
+
+  void start();
+
+  void stop();
+
+  bool writeByte(uint8_t b);
+
 private:
-	uint8_t m_pinClk;
-	uint8_t m_pinDIO;
-	uint8_t m_brightness;
+  uint8_t m_pinClk;
+  uint8_t m_pinDIO;
+  uint8_t m_brightness;
 };
 
 #endif // __TM1637DISPLAY__

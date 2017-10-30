@@ -31,7 +31,7 @@ uint32_t IRL_LastTime = 0;
 
 /*
 void IREvent(uint8_t protocol, uint16_t address, uint32_t command) {
-	// Called when directly received correct IR Signal
-	// Do not use Serial inside, it can crash your Arduino!
-	// Should be overwritten by the user.
+        // Called when directly received correct IR Signal
+        // Do not use Serial inside, it can crash your Arduino!
+        // Should be overwritten by the user.
 }*/
