@@ -62,8 +62,8 @@ uint8_t alarmAttempts = 0;
 uint8_t counter = 0;
 uint8_t seconds = 0;
 
-volatile uint8_t buttonStates = 0b111;   // gespeicherte Zustände
-volatile uint8_t interruptFlags = 0; // 0-snooze	1-button1	2-button2	3-RTC
+volatile uint8_t buttonStates = 0b111; // gespeicherte Zustände
+volatile uint8_t interruptFlags = 0;   // 0-snooze	1-button1	2-button2	3-RTC
 
 bool blinkState = true; // Doppelpunkt, Alarm-LED, Alarmzeit einstellen
 bool snoozeState = false;
@@ -112,7 +112,7 @@ int main(void)
 
   timer0_init(); // Timer0 initialisieren
   init_buttons();
-  uart_init(UART_BAUD_SELECT(UART_BAUD,F_CPU));
+  uart_init(UART_BAUD_SELECT(UART_BAUD, F_CPU));
 
   sei();      // globale Interrupts aktivieren
   init_rtc(); // DS3231
@@ -126,7 +126,7 @@ int main(void)
   // rtc.setDOW(3);     // Day-of-Week (1-Montag 7-Sonntag)
   // rtc.setTime(17, 53, 0);     // 24h Format hh::mm:ss
   // rtc.setHour(19);
-  // rtc.setDate(15, 2, 2017);   // tt.mm.jjjj
+  // rtc.setDate(31, 10, 2017);   // tt.mm.jjjj
 
   // DS3231
 
@@ -901,28 +901,28 @@ uint8_t adjustMinute(uint8_t min)
     return min;
 }
 
-
 void printClock(Time t)
 {
-uart_putUInt16(t.hour);
-uart_puts(":");
-uart_putUInt16(t.min);
-uart_puts(":");
-uart_putUInt16(t.sec);
+  uart_putUInt16(t.hour);
+  uart_puts(":");
+  uart_putUInt16(t.min);
+  uart_puts(":");
+  uart_putUInt16(t.sec);
 }
 
 void printDate(Date t)
 {
-uart_putUInt16(t.day);
-uart_puts(".");
-uart_putUInt16(t.month);
-uart_puts(".");
-uart_putUInt16(t.year);
-uart_puts(" - ");
-uart_putUInt16(t.dow);
-uart_puts(".Tag der Woche");
-}
+  Date output = t;
 
+  uart_putUInt16(output.day);
+  uart_puts(".");
+  uart_putUInt16(output.month);
+  uart_puts(".");
+  uart_putUInt16(output.year);
+  uart_puts(" - ");
+  uart_putUInt16(output.dow);
+  uart_puts(".Tag der Woche");
+}
 
 void saveStatistics()
 {
@@ -979,65 +979,63 @@ uint16_t readSavedValue(uint8_t index)
 
 void showStartMessages()
 {
-uart_puts("Uhrzeit: ");
-printClock(rtc.getTime());
-uart_putNewLine();
+  uart_puts("Uhrzeit: ");
+  printClock(rtc.getTime());
+  uart_putNewLine();
 
-uart_puts("Datum: ");
-printDate(rtc.getDate());
-uart_putNewLine();
+  uart_puts("Datum: ");
+  printDate(rtc.getDate());
+  uart_putNewLine();
 
-uart_puts("Alarm1: ");
-printClock(rtc.getShowAlarm1(LEDSTART));
-uart_putNewLine();
+  uart_puts("Alarm1: ");
+  printClock(rtc.getShowAlarm1(LEDSTART));
+  uart_putNewLine();
 
-uart_puts("Alarm2: ");
-printClock(rtc.getShowAlarm2(LEDSTART));
-uart_putNewLine();
+  uart_puts("Alarm2: ");
+  printClock(rtc.getShowAlarm2(LEDSTART));
+  uart_putNewLine();
 
-uart_puts("Alarmmodus:");
-uart_putUInt16((uint8_t)alarmMode);
-uart_putNewLine();
-uart_putNewLine();
+  uart_puts("Alarmmodus:");
+  uart_putUInt16((uint8_t)alarmMode);
+  uart_putNewLine();
+  uart_putNewLine();
 
-uart_puts("Snooze-Klicks: ");
-uart_putUInt16(readSavedValue(0));
-uart_putNewLine();
+  uart_puts("Snooze-Klicks: ");
+  uart_putUInt16(readSavedValue(0));
+  uart_putNewLine();
 
-uart_puts("Snooze-Longklicks: ");
-uart_putUInt16(readSavedValue(2));
-uart_putNewLine();
+  uart_puts("Snooze-Longklicks: ");
+  uart_putUInt16(readSavedValue(2));
+  uart_putNewLine();
 
-uart_puts("Taste1-Klicks: ");
-uart_putUInt16(readSavedValue(4));
-uart_putNewLine();
+  uart_puts("Taste1-Klicks: ");
+  uart_putUInt16(readSavedValue(4));
+  uart_putNewLine();
 
-uart_puts("Taste1-Longklicks: ");
-uart_putUInt16(readSavedValue(6));
-uart_putNewLine();
+  uart_puts("Taste1-Longklicks: ");
+  uart_putUInt16(readSavedValue(6));
+  uart_putNewLine();
 
-uart_puts("Taste2-Klicks: ");
-uart_putUInt16(readSavedValue(8));
-uart_putNewLine();
+  uart_puts("Taste2-Klicks: ");
+  uart_putUInt16(readSavedValue(8));
+  uart_putNewLine();
 
-uart_puts("Taste2-Longklicks: ");
-uart_putUInt16(readSavedValue(10));
-uart_putNewLine();
+  uart_puts("Taste2-Longklicks: ");
+  uart_putUInt16(readSavedValue(10));
+  uart_putNewLine();
 
-uart_puts("Remote-Kommandos: ");
-uart_putUInt16(readSavedValue(12));
-uart_putNewLine();
+  uart_puts("Remote-Kommandos: ");
+  uart_putUInt16(readSavedValue(12));
+  uart_putNewLine();
 
-uart_puts("Alarm1 ausgeloest: ");
-uart_putUInt16(readSavedValue(14));
-uart_putNewLine();
+  uart_puts("Alarm1 ausgeloest: ");
+  uart_putUInt16(readSavedValue(14));
+  uart_putNewLine();
 
-uart_puts("Alarm2 ausgeloest: ");
-uart_putUInt16(readSavedValue(16));
-uart_putNewLine();
-
+  uart_puts("Alarm2 ausgeloest: ");
+  uart_putUInt16(readSavedValue(16));
+  uart_putNewLine();
 }
-
 
 #pragma endregion
 

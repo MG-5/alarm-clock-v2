@@ -75,7 +75,7 @@ Date DS3231::getDate()
   i2c_rep_start(REG_I2C + I2C_READ);            // set device address and read mode
   result.dow = bcdToDec(i2c_readAck());         // read one byte from address REG_DOW
   result.day = bcdToDec(i2c_readAck());         //  "    "    "    "     "    REG_DOW+1
-  result.month = bcdToDec(i2c_readAck());       //  "    "    "    "     "    REG_DOW+3
+  result.month = bcdToDec(i2c_readAck());       //  "    "    "    "     "    REG_DOW+2
   result.year = 2000 + bcdToDec(i2c_readNak()); //  "    "    "    "     "    REG_DOW+3
 
   i2c_stop(); // set stop condition = release bus
@@ -107,7 +107,7 @@ void DS3231::setHour(uint8_t hour)
 void DS3231::setDate(uint8_t day, uint8_t month, uint16_t year)
 {
   if (((day >= 1) && (day <= 31)) && ((month >= 1) && (month <= 12)) &&
-      ((year >= 2000) && (year < 3000)))
+      ((year >= 2000) && (year < 2100)))
   {
     year -= 2000;
 
