@@ -101,8 +101,8 @@ int main(void)
   PORTD |= (1 << IR_PIN); // IR receiver
 
   /******Ausgänge******/
-  DDRB |= 0b00011110; // B1:4
-  DDRD |=(1<<PIND4)|(1<<PIND5); //LEDs
+  DDRB |= 0b00011110;                  // B1:4
+  DDRD |= (1 << PIND4) | (1 << PIND5); // LEDs
 
   /*****Interrupts*****/
   EICRA |= (1 << ISC00);
@@ -205,7 +205,6 @@ int main(void)
         }
 
         clock(t, blinkState);
-
       }
       break;
 
@@ -422,22 +421,23 @@ int main(void)
       if (rtc.triggeredAlarm1())
       {
         t = rtc.getTime();
-        // Serial.println("A1F");
         if (alarmMode == AlarmModes::ALARM1_ACTIVE || alarmMode == AlarmModes::ALARM1_ALARM2_ACTIVE)
         {
           A1_triggers++;
-          // Serial.println("Alarm 1 ausgeloest");
 
-          alarmState = AlarmStates::ALARM1_LED;
-          currentState = States::CLOCK;
-          LED_State = LED_States::NORMAL;
+          if (alarmState != AlarmStates::ALARM2_LED && alarmState != AlarmStates::ALARM2_VIBR)
+          {
+            alarmState = AlarmStates::ALARM1_LED;
+            currentState = States::CLOCK;
+            LED_State = LED_States::NORMAL;
 
-          night = false;
-          counter = 5;
-          prevTime3 = 0;
-          LED_timer = 0;
-          LED_currentColor.setVector(0, 0, 0);
-          LED_Power = true;
+            night = false;
+            counter = 5;
+            prevTime3 = prevTime;
+            LED_timer = 0;
+            LED_currentColor.setVector(0, 0, 0);
+            LED_Power = true;
+          }
         }
         rtc.clearAlarm1Flag();
       }
@@ -445,22 +445,23 @@ int main(void)
       if (rtc.triggeredAlarm2())
       {
         t = rtc.getTime();
-        // Serial.println("A2F");
         if (alarmMode == AlarmModes::ALARM2_ACTIVE || alarmMode == AlarmModes::ALARM1_ALARM2_ACTIVE)
         {
           A2_triggers++;
-          // Serial.println("Alarm 2 ausgeloest");
 
-          alarmState = AlarmStates::ALARM2_LED;
-          currentState = States::CLOCK;
-          LED_State = LED_States::NORMAL;
+          if (alarmState != AlarmStates::ALARM1_LED && alarmState != AlarmStates::ALARM1_VIBR)
+          {
+            alarmState = AlarmStates::ALARM2_LED;
+            currentState = States::CLOCK;
+            LED_State = LED_States::NORMAL;
 
-          night = false;
-          counter = 5;
-          prevTime3 = 0;
-          LED_timer = 0;
-          LED_currentColor.setVector(0, 0, 0);
-          LED_Power = true;
+            night = false;
+            counter = 5;
+            prevTime3 = prevTime;
+            LED_timer = 0;
+            LED_currentColor.setVector(0, 0, 0);
+            LED_Power = true;
+          }
         }
         rtc.clearAlarm2Flag();
       }
