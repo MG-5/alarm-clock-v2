@@ -17,6 +17,9 @@ Wecker.cpp
 #include "infrared.h"
 #include "inits.h"
 #include "timer0.h"
+#include "uart.h"
+
+#define UART_BAUD 38400
 
 #define VIBR_PIN PINB4 // Vibrationskissen - B4
 #define IR_PIN PIND2   // IR-Empfänger - D2
@@ -28,9 +31,9 @@ Wecker.cpp
 TM1637Display tm;
 DS3231 rtc;
 
-OneButton snooze(PINC, 0);  // C0
-OneButton button1(PINC, 1); // C1
-OneButton button2(PINC, 2); // C2
+OneButton snooze(&PINC, 0);  // C0
+OneButton button1(&PINC, 1); // C1
+OneButton button2(&PINC, 2); // C2
 
 Time t;
 Time alarmTime;
@@ -59,7 +62,7 @@ uint8_t alarmAttempts = 0;
 uint8_t counter = 0;
 uint8_t seconds = 0;
 
-volatile uint8_t buttonStates = 0;   // gespeicherte Zustände
+volatile uint8_t buttonStates = 0b111;   // gespeicherte Zustände
 volatile uint8_t interruptFlags = 0; // 0-snooze	1-button1	2-button2	3-RTC
 
 bool blinkState = true; // Doppelpunkt, Alarm-LED, Alarmzeit einstellen
@@ -109,16 +112,13 @@ int main(void)
 
   timer0_init(); // Timer0 initialisieren
   init_buttons();
+  uart_init(UART_BAUD_SELECT(UART_BAUD,F_CPU));
 
   sei();      // globale Interrupts aktivieren
   init_rtc(); // DS3231
   init_PWM();
 
-  /*
-  Serial.begin(9600);
   showStartMessages();
-  Serial.end();
-  */
 
   LED_lastColor.setVector(255, 255, 255);
 
@@ -901,28 +901,28 @@ uint8_t adjustMinute(uint8_t min)
     return min;
 }
 
-/*
+
 void printClock(Time t)
 {
-Serial.print(t.hour);
-Serial.print(":");
-Serial.print(t.min);
-Serial.print(":");
-Serial.print(t.sec);
+uart_putUInt16(t.hour);
+uart_puts(":");
+uart_putUInt16(t.min);
+uart_puts(":");
+uart_putUInt16(t.sec);
 }
 
 void printDate(Date t)
 {
-Serial.print(t.day);
-Serial.print(".");
-Serial.print(t.month);
-Serial.print(".");
-Serial.print(t.year);
-Serial.print(" - ");
-Serial.print(t.dow);
-Serial.print(".Tag der Woche");
+uart_putUInt16(t.day);
+uart_puts(".");
+uart_putUInt16(t.month);
+uart_puts(".");
+uart_putUInt16(t.year);
+uart_puts(" - ");
+uart_putUInt16(t.dow);
+uart_puts(".Tag der Woche");
 }
-*/
+
 
 void saveStatistics()
 {
@@ -976,45 +976,68 @@ uint16_t readSavedValue(uint8_t index)
 {
   return ((eeprom_read_byte((uint8_t *)index) << 8) | eeprom_read_byte((uint8_t *)(index + 1)));
 }
-/*
+
 void showStartMessages()
 {
-Serial.print("Uhrzeit: ");
+uart_puts("Uhrzeit: ");
 printClock(rtc.getTime());
-Serial.println();
-Serial.print("Datum: ");
-printDate(rtc.getDate());
-Serial.println();
-Serial.print("Alarm1: ");
-printClock(rtc.getShowAlarm1(LEDSTART));
-Serial.println();
-Serial.print("Alarm2: ");
-printClock(rtc.getShowAlarm2(LEDSTART));
-Serial.println();
-Serial.print("Alarmmodus:");
-Serial.println(alarmMode);
-Serial.println();
+uart_putNewLine();
 
-Serial.print("Snooze-Klicks: ");
-Serial.println(readSavedValue(0), DEC);
-Serial.print("Snooze-Longklicks: ");
-Serial.println(readSavedValue(2), DEC);
-Serial.print("Taste1-Klicks: ");
-Serial.println(readSavedValue(4), DEC);
-Serial.print("Taste1-Longklicks: ");
-Serial.println(readSavedValue(6), DEC);
-Serial.print("Taste2-Klicks: ");
-Serial.println(readSavedValue(8), DEC);
-Serial.print("Taste2-Longklicks: ");
-Serial.println(readSavedValue(10), DEC);
-Serial.print("Remote-Kommandos: ");
-Serial.println(readSavedValue(12), DEC);
-Serial.print("Alarm1 ausgeloest: ");
-Serial.println(readSavedValue(14), DEC);
-Serial.print("Alarm2 ausgeloest: ");
-Serial.println(readSavedValue(16), DEC);
+uart_puts("Datum: ");
+printDate(rtc.getDate());
+uart_putNewLine();
+
+uart_puts("Alarm1: ");
+printClock(rtc.getShowAlarm1(LEDSTART));
+uart_putNewLine();
+
+uart_puts("Alarm2: ");
+printClock(rtc.getShowAlarm2(LEDSTART));
+uart_putNewLine();
+
+uart_puts("Alarmmodus:");
+uart_putUInt16((uint8_t)alarmMode);
+uart_putNewLine();
+uart_putNewLine();
+
+uart_puts("Snooze-Klicks: ");
+uart_putUInt16(readSavedValue(0));
+uart_putNewLine();
+
+uart_puts("Snooze-Longklicks: ");
+uart_putUInt16(readSavedValue(2));
+uart_putNewLine();
+
+uart_puts("Taste1-Klicks: ");
+uart_putUInt16(readSavedValue(4));
+uart_putNewLine();
+
+uart_puts("Taste1-Longklicks: ");
+uart_putUInt16(readSavedValue(6));
+uart_putNewLine();
+
+uart_puts("Taste2-Klicks: ");
+uart_putUInt16(readSavedValue(8));
+uart_putNewLine();
+
+uart_puts("Taste2-Longklicks: ");
+uart_putUInt16(readSavedValue(10));
+uart_putNewLine();
+
+uart_puts("Remote-Kommandos: ");
+uart_putUInt16(readSavedValue(12));
+uart_putNewLine();
+
+uart_puts("Alarm1 ausgeloest: ");
+uart_putUInt16(readSavedValue(14));
+uart_putNewLine();
+
+uart_puts("Alarm2 ausgeloest: ");
+uart_putUInt16(readSavedValue(16));
+uart_putNewLine();
+
 }
-*/
+
 
 #pragma endregion
 

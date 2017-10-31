@@ -13,7 +13,7 @@
 
 // ----- Initialization and Default Values -----
 
-OneButton::OneButton(volatile uint8_t &pinAddr, uint8_t pin)
+OneButton::OneButton(volatile uint8_t *pinAddr, uint8_t pin)
 {
   _pinAddr = pinAddr;
   _pin = pin;
@@ -63,7 +63,7 @@ bool OneButton::isLongPressed() { return _isLongPressed; }
 void OneButton::tick()
 {
 
-  bool buttonLevel = (_pinAddr >> (_pin)) & 1; // digitalRead(_pin); // current button signal.
+  bool buttonLevel = (*_pinAddr >> (_pin)) & 1; // digitalRead(_pin); // current button signal.
 
   // Implementation of the state machine
   if (state == 0)

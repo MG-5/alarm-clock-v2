@@ -161,6 +161,10 @@ extern void uart_putc(unsigned char data);
  */
 extern void uart_puts(const char *s);
 
+extern void uart_putNewLine ();
+extern void uart_putUInt16(uint16_t number);
+extern void uart_putUInt32(uint32_t number);
+
 /**
  * @brief    Put string from program memory to ringbuffer for transmitting via UART.
  *

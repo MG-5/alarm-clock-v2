@@ -40,6 +40,7 @@ LICENSE:
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
+#include <stdlib.h>
 
 /*
  *  constants and macros
@@ -548,6 +549,25 @@ void uart_puts(const char *s)
     uart_putc(*s++);
 
 } /* uart_puts */
+
+void uart_putNewLine()
+{
+	uart_putc(13);
+	uart_putc(10);
+}
+
+void uart_putUInt16(uint16_t number)
+{
+	char s[1+(number/10)];
+	uart_puts(utoa( number, s, 10 ));
+}
+
+void uart_putUInt32(uint32_t number)
+{
+	char s[1+(number/10)];
+	uart_puts(ultoa( number, s, 10 ));
+}
+
 
 /*************************************************************************
 Function: uart_puts_p()

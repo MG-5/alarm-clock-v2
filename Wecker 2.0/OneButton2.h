@@ -27,7 +27,7 @@ class OneButton
 {
 public:
   // ----- Constructor -----
-  OneButton(volatile uint8_t &pinAddr, uint8_t pin);
+  OneButton(volatile uint8_t *pinAddr, uint8_t pin);
 
   // ----- Set runtime parameters -----
 
@@ -48,7 +48,7 @@ public:
   uint8_t state;
 
 private:
-  volatile uint8_t _pinAddr; // hardware pin address
+  volatile uint8_t *_pinAddr; // hardware pin address
   uint8_t _pin;              // hardware pin number
 
   uint16_t

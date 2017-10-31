@@ -1,8 +1,8 @@
 /*
-Version 2.2
+Version 2.2 - 31. Oktober 2017
 -change sunset - after 15min led strip has full brightness now
 -add some braces
-
+-fix OneButton PIN-parameter as pointer - invert buttonStates as startup
 
 Version 2.1 -
 -change thermometer parameter from float to uint8_t
@@ -66,6 +66,7 @@ Version 1.0 - 29. Mai 2016
 #define MAIN_H_
 
 #include <stdint.h>
+#include "DS3231.h"
 
 void snooze_click();
 void snooze_longPressStart();
@@ -78,14 +79,14 @@ void vibrate(bool vibr);
 void vibration_sequence();
 uint8_t adjustHour(uint8_t hour);
 uint8_t adjustMinute(uint8_t min);
-// void printClock(Time t);
-// void printDate(Date t);
+void printClock(Time t);
+void printDate(Date t);
 
 void saveStatistics();
 void updateEEPROM(uint8_t index, uint8_t value);
 uint16_t readSavedValue(uint8_t index);
 
-// void showStartMessages();
+void showStartMessages();
 void IREvent(uint8_t protocol, uint16_t address, uint32_t command);
 
 #endif /* MAIN_H_ */
