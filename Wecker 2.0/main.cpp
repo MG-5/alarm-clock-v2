@@ -102,6 +102,7 @@ int main(void)
 
   /******Ausgänge******/
   DDRB |= 0b00011110; // B1:4
+  DDRD |=(1<<PIND4)|(1<<PIND5); //LEDs
 
   /*****Interrupts*****/
   EICRA |= (1 << ISC00);
@@ -205,9 +206,6 @@ int main(void)
 
         clock(t, blinkState);
 
-        // Serial.print("Uhrzeit:");
-        // printClock(t);
-        // Serial.println();
       }
       break;
 
