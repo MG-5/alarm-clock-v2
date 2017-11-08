@@ -101,8 +101,7 @@ int main(void)
   PORTD |= (1 << IR_PIN); // IR receiver
 
   /******Ausgänge******/
-  DDRB |= 0b00011110;                  // B1:4
-  DDRD |= (1 << PIND4) | (1 << PIND5); // LEDs
+  DDRB |= 0b00011110; // B1:4
 
   /*****Interrupts*****/
   EICRA |= (1 << ISC00);
@@ -122,6 +121,7 @@ int main(void)
   showStartMessages();
 
   LED_lastColor.setVector(255, 255, 255);
+  setNightmode(false);
 
   // Datums- und Zeiteinstellung
   // rtc.setDOW(3);     // Day-of-Week (1-Montag 7-Sonntag)
@@ -171,7 +171,7 @@ int main(void)
 
         if (!night && t.hour >= 0 && t.hour <= 3) // Nacht-Modus inaktiv & Zeit zum Abschalten?
         {
-          night = true;
+		setNightmode(true);
           saveStatistics();
 
           if (!LED_Power)
@@ -219,7 +219,7 @@ int main(void)
           prevTime = 0;
           counter = 0;
           blinkState = false;
-          night = false;
+		  setNightmode(false);
         }
       }
       break;
@@ -431,7 +431,7 @@ int main(void)
             currentState = States::CLOCK;
             LED_State = LED_States::NORMAL;
 
-            night = false;
+			setNightmode(false);
             counter = 5;
             prevTime3 = prevTime;
             LED_timer = 0;
@@ -455,7 +455,7 @@ int main(void)
             currentState = States::CLOCK;
             LED_State = LED_States::NORMAL;
 
-            night = false;
+			setNightmode(false);
             counter = 5;
             prevTime3 = prevTime;
             LED_timer = 0;
@@ -1034,6 +1034,24 @@ void showStartMessages()
   uart_puts("Alarm2 ausgeloest: ");
   uart_putUInt16(readSavedValue(16));
   uart_putNewLine();
+}
+
+void setNightmode(bool value)
+{
+  if (value)
+  {
+    night = true;
+
+    // switch LED-pins as input, current flows about pull-up resitor -> darker LEDs
+    DDRD &= ~((1 << PIND4) | (1 << PIND5));
+  }
+  else
+  {
+    night = false;
+
+    // switch LED-pins as output, more current -> high LEDs
+    DDRD |= (1 << PIND4) | (1 << PIND5); // LEDs
+  }
 }
 
 #pragma endregion

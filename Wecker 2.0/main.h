@@ -1,4 +1,7 @@
 /*
+Version 2.3 - 8. November 2017
+-add nightmode for alarm LEDs
+
 Version 2.2 - 31. Oktober 2017
 -change sunset - after 15min led strip has full brightness now
 -add some braces
@@ -87,6 +90,7 @@ void updateEEPROM(uint8_t index, uint8_t value);
 uint16_t readSavedValue(uint8_t index);
 
 void showStartMessages();
+void setNightmode(bool value);
 void IREvent(uint8_t protocol, uint16_t address, uint32_t command);
 
 #endif /* MAIN_H_ */
