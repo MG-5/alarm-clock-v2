@@ -38,7 +38,7 @@
 #define REG_AGING 0x10       // Aging Register Address
 #define REG_TEMP 0x11        // Temperature Register Address
 
-#define REG_I2C 0xD0    // DS3231 (Slave) Address 0x68<<1, damit Platz für R/W-Bit ist
+#define REG_I2C 0xD0    // DS3231 (Slave) Address 0x68<<1, damit Platz fï¿½r R/W-Bit ist
 #define REG_ALARM1 0x07 // Alarm 1 Register Address
 #define REG_ALARM2 0x0B // Alarm 2 Register Address
 
@@ -76,67 +76,67 @@
 class Time
 {
 public:
-  uint8_t hour;
-  uint8_t min;
-  uint8_t sec;
+    uint8_t hour;
+    uint8_t min;
+    uint8_t sec;
 
-  Time();
+    Time();
 };
 
 class Date
 {
 public:
-  uint8_t day;
-  uint8_t month;
-  uint16_t year;
-  uint8_t dow;
+    uint8_t day;
+    uint8_t month;
+    uint16_t year;
+    uint8_t dow;
 
-  Date();
+    Date();
 };
 
 class DS3231
 {
 public:
-  void begin();
-  Time getTime();
-  Date getDate();
-  void setTime(uint8_t hour, uint8_t min, uint8_t sec);
-  void setHour(uint8_t hour);
-  void setDate(uint8_t day, uint8_t month, uint16_t year);
-  void setDOW();
-  void setDOW(uint8_t dow);
-  float getTemp();
+    void begin();
+    Time getTime();
+    Date getDate();
+    void setTime(uint8_t hour, uint8_t min, uint8_t sec);
+    void setHour(uint8_t hour);
+    void setDate(uint8_t day, uint8_t month, uint16_t year);
+    void setDOW();
+    void setDOW(uint8_t dow);
+    float getTemp();
 
-  // Alarm1
-  void setInternAlarm1(const uint8_t sec, const uint8_t min, const uint8_t hour);
-  void setShowAlarm1(uint8_t minute, uint8_t hour, uint8_t diff);
-  Time getInternAlarm1();
-  Time getShowAlarm1(const uint8_t diff);
-  void clearAlarm1Flag();
-  uint8_t triggeredAlarm1();
-  void setAlarm1Interrupt(bool enable);
+    // Alarm1
+    void setInternAlarm1(const uint8_t sec, const uint8_t min, const uint8_t hour);
+    void setShowAlarm1(uint8_t minute, uint8_t hour, uint8_t diff);
+    Time getInternAlarm1();
+    Time getShowAlarm1(const uint8_t diff);
+    void clearAlarm1Flag();
+    uint8_t triggeredAlarm1();
+    void setAlarm1Interrupt(bool enable);
 
-  // Alarm2
-  void setInternAlarm2(const uint8_t min, const uint8_t hour);
-  void setShowAlarm2(uint8_t minute, uint8_t hour, uint8_t diff);
-  Time getInternAlarm2();
-  Time getShowAlarm2(const uint8_t diff);
-  void clearAlarm2Flag();
-  uint8_t triggeredAlarm2();
-  void setAlarm2Interrupt(bool enable);
+    // Alarm2
+    void setInternAlarm2(const uint8_t min, const uint8_t hour);
+    void setShowAlarm2(uint8_t minute, uint8_t hour, uint8_t diff);
+    Time getInternAlarm2();
+    Time getShowAlarm2(const uint8_t diff);
+    void clearAlarm2Flag();
+    uint8_t triggeredAlarm2();
+    void setAlarm2Interrupt(bool enable);
 
-  void forceTemperatureUpdate();
-  float getTemperature();
+    void forceTemperatureUpdate();
+    float getTemperature();
 
-  long getUnixTime(Time t, Date d);
+    long getUnixTime(Time t, Date d);
 
-  void enable32KHz(bool enable);
-  void setOutput(bool enable);
-  void setSQWRate(int rate);
+    void enable32KHz(bool enable);
+    void setOutput(bool enable);
+    void setSQWRate(int rate);
 
-  uint8_t readRegister(uint8_t reg);
-  void writeRegister(uint8_t reg, uint8_t value);
-  uint8_t decToBcd(uint8_t val);
-  uint8_t bcdToDec(uint8_t val);
+    uint8_t readRegister(uint8_t reg);
+    void writeRegister(uint8_t reg, uint8_t value);
+    uint8_t decToBcd(uint8_t val);
+    uint8_t bcdToDec(uint8_t val);
 };
 #endif

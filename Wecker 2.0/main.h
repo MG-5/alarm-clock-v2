@@ -68,8 +68,8 @@ Version 1.0 - 29. Mai 2016
 #ifndef MAIN_H_
 #define MAIN_H_
 
-#include <stdint.h>
 #include "DS3231.h"
+#include <stdint.h>
 
 void snooze_click();
 void snooze_longPressStart();

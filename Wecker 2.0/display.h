@@ -20,7 +20,7 @@ void clock(Time &ttime, bool doublepoint);
 // display any number between 0-100
 void display_Percent(uint8_t percent);
 
-// display the temperatur in Celcius °C
+// display the temperatur in Celcius ï¿½C
 void thermometer(uint8_t value);
 
 #endif /* DISPLAY_H_ */

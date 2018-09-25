@@ -66,7 +66,7 @@ THE SOFTWARE.
 #define NEC_ADDRESS_LENGTH 16
 #define NEC_COMMAND_LENGTH 16
 #define NEC_LENGTH                                                                                 \
-  2 + NEC_BLOCKS * 8 * 2 // 2 for lead + space, each block has 8bits: mark and space
+    2 + NEC_BLOCKS * 8 * 2 // 2 for lead + space, each block has 8bits: mark and space
 #define NEC_TIMEOUT NEC_PULSE * 173
 #define NEC_MARK_LEAD NEC_PULSE * 16
 #define NEC_SPACE_LEAD NEC_PULSE * 8
@@ -85,7 +85,7 @@ THE SOFTWARE.
 #define PANASONIC_ADDRESS_LENGTH 16
 #define PANASONIC_COMMAND_LENGTH 32
 #define PANASONIC_LENGTH                                                                           \
-  2 + PANASONIC_BLOCKS * 8 * 2 // 2 for lead + space, each block has 8bits: mark and space
+    2 + PANASONIC_BLOCKS * 8 * 2 // 2 for lead + space, each block has 8bits: mark and space
 #define PANASONIC_TIMEOUT PANASONIC_PULSE * 173
 #define PANASONIC_MARK_LEAD PANASONIC_PULSE * 8
 #define PANASONIC_SPACE_LEAD PANASONIC_PULSE * 4
@@ -142,16 +142,16 @@ Panasonic pulse demonstration:
 
 enum IRType
 {
-  IR_NO_PROTOCOL, // 0
-  IR_USER,        // 1
-  IR_ALL,         // 2
-  IR_NEC,         // ...
-  IR_PANASONIC,
-  IR_SONY8,
-  IR_SONY12,
-  IR_SONY15,
-  IR_SONY20,
-  // add new protocols here
+    IR_NO_PROTOCOL, // 0
+    IR_USER,        // 1
+    IR_ALL,         // 2
+    IR_NEC,         // ...
+    IR_PANASONIC,
+    IR_SONY8,
+    IR_SONY12,
+    IR_SONY15,
+    IR_SONY20,
+    // add new protocols here
 };
 
 // definitions to use decoding functions with extra accuracy
@@ -168,27 +168,23 @@ enum IRType
 
 // definition to get the higher value
 #define MAX(a, b)                                                                                  \
-  \
-({                                                                                                 \
-    __typeof__(a) _a = (a);                                                                        \
-    __typeof__(b) _b = (b);                                                                        \
-    \
-_a > _b                                                                                            \
-        ? _a                                                                                       \
-        : _b;                                                                                      \
-  })
+                                                                                                   \
+    ({                                                                                             \
+        __typeof__(a) _a = (a);                                                                    \
+        __typeof__(b) _b = (b);                                                                    \
+                                                                                                   \
+        _a > _b ? _a : _b;                                                                         \
+    })
 
 // definition to get the lower value
 #define MIN(a, b)                                                                                  \
-  \
-({                                                                                                 \
-    __typeof__(a) _a = (a);                                                                        \
-    __typeof__(b) _b = (b);                                                                        \
-    \
-_a < _b                                                                                            \
-        ? _a                                                                                       \
-        : _b;                                                                                      \
-  })
+                                                                                                   \
+    ({                                                                                             \
+        __typeof__(a) _a = (a);                                                                    \
+        __typeof__(b) _b = (b);                                                                    \
+                                                                                                   \
+        _a < _b ? _a : _b;                                                                         \
+    })
 
 //================================================================================
 // Prototypes
@@ -201,10 +197,12 @@ _a < _b                                                                         
 void __attribute__((weak)) decodeIR(const uint16_t duration);
 
 // called by interrupt CHANGE
-template <IRType irType> inline void IRLinterrupt(void) __attribute__((always_inline));
+template <IRType irType>
+inline void IRLinterrupt(void) __attribute__((always_inline));
 
 // special decode function for each protocol
-template <bool extraAccuracy> inline void decodeNec(const uint16_t duration);
+template <bool extraAccuracy>
+inline void decodeNec(const uint16_t duration);
 
 // functions to check if the received data is valid with the protocol checksums
 inline bool IRLcheckInverse0(uint8_t data[]) __attribute__((always_inline));
@@ -225,97 +223,99 @@ inline bool IRLdecode(uint16_t duration, uint8_t data[]) __attribute__((always_i
 extern uint32_t IRL_LastTime;
 extern volatile uint16_t timer0_overflows;
 
-template <IRType irType> void IRLinterrupt(void)
+template <IRType irType>
+void IRLinterrupt(void)
 {
-  // save the duration between the last reading
-  uint32_t time = ((uint32_t)(timer0_overflows * (uint32_t)256) + TCNT0) * 8;
-  uint32_t duration_32 = time - IRL_LastTime;
-  IRL_LastTime = time;
+    // save the duration between the last reading
+    uint32_t time = ((uint32_t)(timer0_overflows * (uint32_t)256) + TCNT0) * 8;
+    uint32_t duration_32 = time - IRL_LastTime;
+    IRL_LastTime = time;
 
-  // calculate 16 bit duration. On overflow sets duration to a clear timeout
-  uint16_t duration = 0xFFFF;
-  if (duration_32 <= 0xFFFF)
-  {
-    duration = duration_32;
-  }
+    // calculate 16 bit duration. On overflow sets duration to a clear timeout
+    uint16_t duration = 0xFFFF;
+    if (duration_32 <= 0xFFFF)
+    {
+        duration = duration_32;
+    }
 
-  decodeNec<IR_NO_EXTRA_ACCURACY>(duration);
+    decodeNec<IR_NO_EXTRA_ACCURACY>(duration);
 }
 
-template <bool extraAccuracy> void decodeNec(const uint16_t duration)
+template <bool extraAccuracy>
+void decodeNec(const uint16_t duration)
 {
-  // temporary buffer to hold bytes for decoding this protocol
-  static uint8_t data[NEC_BLOCKS];
+    // temporary buffer to hold bytes for decoding this protocol
+    static uint8_t data[NEC_BLOCKS];
 
-  // pass the duration to the decoding function
-  bool newInput;
+    // pass the duration to the decoding function
+    bool newInput;
 
-  newInput =
-      IRLdecode<NEC_LENGTH, (NEC_TIMEOUT + NEC_MARK_LEAD) / 2, // irLength, timeoutThreshold
-                (NEC_MARK_LEAD + NEC_SPACE_ONE) / 2,
-                (NEC_SPACE_LEAD + NEC_SPACE_HOLDING) / 2, // markLeadThreshold, spaceLeadThreshold
-                (NEC_SPACE_HOLDING + NEC_SPACE_ONE) / 2,
-                0,                                    // spaceLeadHoldingThreshold, markThreshold
-                (NEC_SPACE_ONE + NEC_SPACE_ZERO) / 2, // spaceThreshold
-                0, 0>                                 // markTimeout, spaceTimeout
-      (duration, data);
+    newInput =
+        IRLdecode<NEC_LENGTH, (NEC_TIMEOUT + NEC_MARK_LEAD) / 2, // irLength, timeoutThreshold
+                  (NEC_MARK_LEAD + NEC_SPACE_ONE) / 2,
+                  (NEC_SPACE_LEAD + NEC_SPACE_HOLDING) / 2, // markLeadThreshold, spaceLeadThreshold
+                  (NEC_SPACE_HOLDING + NEC_SPACE_ONE) / 2,
+                  0,                                    // spaceLeadHoldingThreshold, markThreshold
+                  (NEC_SPACE_ONE + NEC_SPACE_ZERO) / 2, // spaceThreshold
+                  0, 0>                                 // markTimeout, spaceTimeout
+        (duration, data);
 
-  if (newInput)
-  {
-    // Check if the protcol's checksum is correct
-    bool holding;
-    if (IRLcheckInverse1(data) || (holding = IRLcheckHolding(data)))
+    if (newInput)
     {
-      // normally NEC also check for the inverse of the address.
-      // newer remotes dont have this because of the wide used protocol all addresses were already
-      // used to make it less complicated its left out and the user can check the command inverse
-      // himself if needed
-      // if (!holding && !extended && !IRLcheckInverse0(data))
-      //	return;
+        // Check if the protcol's checksum is correct
+        bool holding;
+        if (IRLcheckInverse1(data) || (holding = IRLcheckHolding(data)))
+        {
+            // normally NEC also check for the inverse of the address.
+            // newer remotes dont have this because of the wide used protocol all addresses were
+            // already used to make it less complicated its left out and the user can check the
+            // command inverse himself if needed if (!holding && !extended &&
+            // !IRLcheckInverse0(data))
+            //	return;
 
-      // save address + command and trigger event
-      uint16_t address = UINT16_AT_OFFSET(data, 0);
-      uint16_t command = UINT16_AT_OFFSET(data, 2);
+            // save address + command and trigger event
+            uint16_t address = UINT16_AT_OFFSET(data, 0);
+            uint16_t command = UINT16_AT_OFFSET(data, 2);
 
-      IREvent(IR_NEC, address, command);
+            IREvent(IR_NEC, address, command);
+        }
     }
-  }
 }
 
 bool IRLcheckInverse0(uint8_t data[])
 {
-  // check if byte 2 and is the inverse of byte 3
-  if (uint8_t((data[0] ^ (~data[1]))) == 0)
-    return true;
-  else
-    return false;
+    // check if byte 2 and is the inverse of byte 3
+    if (uint8_t((data[0] ^ (~data[1]))) == 0)
+        return true;
+    else
+        return false;
 }
 
 bool IRLcheckInverse1(uint8_t data[])
 {
-  // check if byte 0 and is the inverse of byte 1
-  if (uint8_t((data[2] ^ (~data[3]))) == 0)
-    return true;
-  else
-    return false;
+    // check if byte 0 and is the inverse of byte 1
+    if (uint8_t((data[2] ^ (~data[3]))) == 0)
+        return true;
+    else
+        return false;
 }
 
 bool IRLcheckHolding(uint8_t data[])
 {
-  // check if at least the command is always 1
-  if (data[2] == 0xFF && data[3] == 0xFF)
-    return true;
-  else
-    return false;
+    // check if at least the command is always 1
+    if (data[2] == 0xFF && data[3] == 0xFF)
+        return true;
+    else
+        return false;
 }
 
 bool IRLcheckXOR0(uint8_t data[])
 {
-  // this function is used for panasonic checksum
-  if (uint8_t(data[2] ^ data[3] ^ data[4]) == data[5])
-    return true;
-  else
-    return false;
+    // this function is used for panasonic checksum
+    if (uint8_t(data[2] ^ data[3] ^ data[4]) == data[5])
+        return true;
+    else
+        return false;
 }
 
 // multifunctional template for receiving
@@ -325,148 +325,148 @@ template <uint8_t irLength, uint16_t timeoutThreshold, uint16_t markLeadThreshol
 bool IRLdecode(uint16_t duration, uint8_t data[])
 {
 
-  // variables for ir processing
-  static uint8_t count = 0;
+    // variables for ir processing
+    static uint8_t count = 0;
 
-  // if timeout always start next possible reading and abort any pending readings
-  if (duration >= timeoutThreshold)
-    count = 1;
+    // if timeout always start next possible reading and abort any pending readings
+    if (duration >= timeoutThreshold)
+        count = 1;
 
-  // on a reset (error in decoding) we are waiting for a timeout to start a new reading again
-  // this is to not conflict with other protocols while they are sending 0/1 which might be similar
-  // to a lead in another protocol
-  else if (count == 0)
-  {
-    return false;
-  }
-
-  // check pulses for mark/space and lead + logical 0/1 seperate
-  else
-  {
-    // Mark pulses (odd numbers)
-    if (count % 2 == 1)
+    // on a reset (error in decoding) we are waiting for a timeout to start a new reading again
+    // this is to not conflict with other protocols while they are sending 0/1 which might be
+    // similar to a lead in another protocol
+    else if (count == 0)
     {
-      // check Mark Lead (needs a timeout or a correct signal)
-      if (markLeadThreshold && count == 1)
-      {
-        // lead is okay// wrong lead
-        if (duration <= markLeadThreshold)
-        {
-          count = 0;
-          return false;
-        }
-      }
-
-      else
-      {
-        // check for timeout if needed (might be a different protocol)
-        if (markTimeout && duration > markTimeout)
-        {
-          count = 0;
-          return false;
-        }
-
-        // only check values if the protocol has different logical space pulses
-        else if (markThreshold)
-        {
-
-          // get number of the Mark Bits (starting from zero)
-          uint8_t length;
-          // only save every 2nd value, substract the first two lead pulses
-          if (!spaceThreshold)
-            length = (count / 2) - 1;
-          // special case: spaces and marks both have data in the pulse
-          else
-            length = count - 2;
-
-          // move bits and write 1 or 0 depending on the duration
-          // 1.7: changed from MSB to LSB. somehow takes a bit more flash but is correct and easier
-          // to handle.
-          data[length / 8] >>= 1;
-          if (duration > markThreshold)
-            data[length / 8] |= 0x80;
-          // else // normally not needed through the bitshift
-          //	data[length / 8] &= ~0x80;
-        }
-
-        // check last input (always a mark)
-        if (count > irLength)
-        {
-          count = 0;
-          return true;
-        }
-      }
+        return false;
     }
 
-    // Space pulses (even numbers)
+    // check pulses for mark/space and lead + logical 0/1 seperate
     else
     {
-      // check Space Lead/Space Holding
-      if (spaceLeadThreshold && count == 2)
-      {
-        // normal Space, next reading
-        if (duration > spaceLeadThreshold)
-          ;
-
-        // Button holding (if supported by protocol)
-        else if (spaceLeadHoldingThreshold && duration > spaceLeadHoldingThreshold)
+        // Mark pulses (odd numbers)
+        if (count % 2 == 1)
         {
-          // set command to 0xFF if button is held down
-          if (irLength == (4 * 8 * 2 + 2))
-          {
-            data[0] = data[1] = 0x00;
-            data[2] = data[3] = 0xFF;
-          }
-          count = 0;
-          return true;
+            // check Mark Lead (needs a timeout or a correct signal)
+            if (markLeadThreshold && count == 1)
+            {
+                // lead is okay// wrong lead
+                if (duration <= markLeadThreshold)
+                {
+                    count = 0;
+                    return false;
+                }
+            }
+
+            else
+            {
+                // check for timeout if needed (might be a different protocol)
+                if (markTimeout && duration > markTimeout)
+                {
+                    count = 0;
+                    return false;
+                }
+
+                // only check values if the protocol has different logical space pulses
+                else if (markThreshold)
+                {
+
+                    // get number of the Mark Bits (starting from zero)
+                    uint8_t length;
+                    // only save every 2nd value, substract the first two lead pulses
+                    if (!spaceThreshold)
+                        length = (count / 2) - 1;
+                    // special case: spaces and marks both have data in the pulse
+                    else
+                        length = count - 2;
+
+                    // move bits and write 1 or 0 depending on the duration
+                    // 1.7: changed from MSB to LSB. somehow takes a bit more flash but is correct
+                    // and easier to handle.
+                    data[length / 8] >>= 1;
+                    if (duration > markThreshold)
+                        data[length / 8] |= 0x80;
+                    // else // normally not needed through the bitshift
+                    //	data[length / 8] &= ~0x80;
+                }
+
+                // check last input (always a mark)
+                if (count > irLength)
+                {
+                    count = 0;
+                    return true;
+                }
+            }
         }
-        // wrong space
+
+        // Space pulses (even numbers)
         else
         {
-          count = 0;
-          return false;
-        }
-      }
-      else
-      {
-        // check for timeout if needed (might be a different protocol)
-        if (spaceTimeout && duration > spaceTimeout)
-        {
-          count = 0;
-          return false;
+            // check Space Lead/Space Holding
+            if (spaceLeadThreshold && count == 2)
+            {
+                // normal Space, next reading
+                if (duration > spaceLeadThreshold)
+                    ;
+
+                // Button holding (if supported by protocol)
+                else if (spaceLeadHoldingThreshold && duration > spaceLeadHoldingThreshold)
+                {
+                    // set command to 0xFF if button is held down
+                    if (irLength == (4 * 8 * 2 + 2))
+                    {
+                        data[0] = data[1] = 0x00;
+                        data[2] = data[3] = 0xFF;
+                    }
+                    count = 0;
+                    return true;
+                }
+                // wrong space
+                else
+                {
+                    count = 0;
+                    return false;
+                }
+            }
+            else
+            {
+                // check for timeout if needed (might be a different protocol)
+                if (spaceTimeout && duration > spaceTimeout)
+                {
+                    count = 0;
+                    return false;
+                }
+
+                // only check values if the protocol has different logical space pulses
+                else if (spaceThreshold)
+                {
+
+                    // get number of the Space Bits (starting from zero)
+                    uint8_t length;
+                    // only save every 2nd value, substract the first two lead pulses
+                    if (!markThreshold)
+                        length = (count / 2) - 2;
+                    // special case: spaces and marks both have data in the pulse
+                    else
+                        length = count - 2;
+
+                    // move bits and write 1 or 0 depending on the duration
+                    // 1.7: changed from MSB to LSB. somehow takes a bit more flash but is correct
+                    // and easier to handle.
+                    data[length / 8] >>= 1;
+                    if (duration > spaceThreshold)
+                        data[length / 8] |= 0x80;
+                    // else // normally not needed through the bitshift
+                    //	data[length / 8] &= ~0x80;
+                }
+            }
         }
 
-        // only check values if the protocol has different logical space pulses
-        else if (spaceThreshold)
-        {
-
-          // get number of the Space Bits (starting from zero)
-          uint8_t length;
-          // only save every 2nd value, substract the first two lead pulses
-          if (!markThreshold)
-            length = (count / 2) - 2;
-          // special case: spaces and marks both have data in the pulse
-          else
-            length = count - 2;
-
-          // move bits and write 1 or 0 depending on the duration
-          // 1.7: changed from MSB to LSB. somehow takes a bit more flash but is correct and easier
-          // to handle.
-          data[length / 8] >>= 1;
-          if (duration > spaceThreshold)
-            data[length / 8] |= 0x80;
-          // else // normally not needed through the bitshift
-          //	data[length / 8] &= ~0x80;
-        }
-      }
+        // next reading, no errors
+        count++;
     }
 
-    // next reading, no errors
-    count++;
-  }
-
-  // no valid input (yet)
-  return false;
+    // no valid input (yet)
+    return false;
 }
 
 #endif

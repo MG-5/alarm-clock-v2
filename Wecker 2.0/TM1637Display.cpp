@@ -72,111 +72,120 @@ const uint8_t digitToSegment[] = {
 
 TM1637Display::TM1637Display()
 {
-  // Set the pin direction and default value.
-  // Both pins are set as inputs, allowing the pull-up resistors to pull them up
-  clear_bit(CLK_DDR, CLK_PIN); // input
-  clear_bit(DIO_DDR, DIO_PIN); // input
+    // Set the pin direction and default value.
+    // Both pins are set as inputs, allowing the pull-up resistors to pull them up
+    clear_bit(CLK_DDR, CLK_PIN); // input
+    clear_bit(DIO_DDR, DIO_PIN); // input
 
-  clear_bit(CLK_PORT, CLK_PIN); // low
-  clear_bit(DIO_PORT, DIO_PIN); // low
+    clear_bit(CLK_PORT, CLK_PIN); // low
+    clear_bit(DIO_PORT, DIO_PIN); // low
 }
 
-void TM1637Display::setBrightness(uint8_t brightness) { m_brightness = brightness; }
+void TM1637Display::setBrightness(uint8_t brightness)
+{
+    m_brightness = brightness;
+}
 
 void TM1637Display::setSegments(const uint8_t digit0, const uint8_t digit1, const uint8_t digit2,
                                 const uint8_t digit3)
 {
-  // Write COMM1
-  start();
-  writeByte(TM1637_I2C_COMM1);
-  stop();
+    // Write COMM1
+    start();
+    writeByte(TM1637_I2C_COMM1);
+    stop();
 
-  // Write COMM2 + first digit address
-  start();
-  writeByte(TM1637_I2C_COMM2);
+    // Write COMM2 + first digit address
+    start();
+    writeByte(TM1637_I2C_COMM2);
 
-  // Write the data bytes
-  writeByte(digit0);
-  writeByte(digit1);
-  writeByte(digit2);
-  writeByte(digit3);
+    // Write the data bytes
+    writeByte(digit0);
+    writeByte(digit1);
+    writeByte(digit2);
+    writeByte(digit3);
 
-  stop();
+    stop();
 
-  // Write COMM3 + brightness
-  start();
-  writeByte(TM1637_I2C_COMM3 + (m_brightness & 0x0f));
-  stop();
+    // Write COMM3 + brightness
+    start();
+    writeByte(TM1637_I2C_COMM3 + (m_brightness & 0x0f));
+    stop();
 }
 
-void TM1637Display::bitDelay() { _delay_us(50); }
+void TM1637Display::bitDelay()
+{
+    _delay_us(50);
+}
 
 void TM1637Display::start()
 {
-  set_bit(DIO_DDR, DIO_PIN); // output
-  bitDelay();
+    set_bit(DIO_DDR, DIO_PIN); // output
+    bitDelay();
 }
 
 void TM1637Display::stop()
 {
-  set_bit(DIO_DDR, DIO_PIN); // output
-  bitDelay();
-  clear_bit(CLK_DDR, CLK_PIN); // input
-  bitDelay();
-  clear_bit(DIO_DDR, DIO_PIN); // input
-  bitDelay();
+    set_bit(DIO_DDR, DIO_PIN); // output
+    bitDelay();
+    clear_bit(CLK_DDR, CLK_PIN); // input
+    bitDelay();
+    clear_bit(DIO_DDR, DIO_PIN); // input
+    bitDelay();
 }
 
 bool TM1637Display::writeByte(uint8_t b)
 {
-  uint8_t data = b;
+    uint8_t data = b;
 
-  // 8 Data Bits
-  for (uint8_t i = 0; i < 8; i++)
-  {
-    // CLK low
+    // 8 Data Bits
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        // CLK low
+        set_bit(CLK_DDR, CLK_PIN); // output
+        bitDelay();
+
+        // Set data bit
+        if (data & 0x01)
+        {
+            clear_bit(DIO_DDR, DIO_PIN); // input
+        }
+
+        else
+        {
+            set_bit(DIO_DDR, DIO_PIN); // output
+        }
+
+        bitDelay();
+
+        // CLK high
+        clear_bit(CLK_DDR, CLK_PIN); // input
+        bitDelay();
+        data = data >> 1;
+    }
+
+    // Wait for acknowledge
+    // CLK to zero
+    set_bit(CLK_DDR, CLK_PIN);   // output
+    clear_bit(DIO_DDR, DIO_PIN); // input
+    bitDelay();
+
+    // CLK to high
+    clear_bit(CLK_DDR, CLK_PIN); // input
+    bitDelay();
+    uint8_t ack = check_bit(PIND, DIO_PIN); // digitalRead(m_pinDIO);
+    if (ack == 0)
+    {
+        set_bit(DIO_DDR, DIO_PIN); // output
+    }
+
+    bitDelay();
     set_bit(CLK_DDR, CLK_PIN); // output
     bitDelay();
 
-    // Set data bit
-    if (data & 0x01)
-    {
-      clear_bit(DIO_DDR, DIO_PIN); // input
-    }
-
-    else
-    {
-      set_bit(DIO_DDR, DIO_PIN); // output
-    }
-
-    bitDelay();
-
-    // CLK high
-    clear_bit(CLK_DDR, CLK_PIN); // input
-    bitDelay();
-    data = data >> 1;
-  }
-
-  // Wait for acknowledge
-  // CLK to zero
-  set_bit(CLK_DDR, CLK_PIN);   // output
-  clear_bit(DIO_DDR, DIO_PIN); // input
-  bitDelay();
-
-  // CLK to high
-  clear_bit(CLK_DDR, CLK_PIN); // input
-  bitDelay();
-  uint8_t ack = check_bit(PIND, DIO_PIN); // digitalRead(m_pinDIO);
-  if (ack == 0)
-  {
-    set_bit(DIO_DDR, DIO_PIN); // output
-  }
-
-  bitDelay();
-  set_bit(CLK_DDR, CLK_PIN); // output
-  bitDelay();
-
-  return ack;
+    return ack;
 }
 
-uint8_t TM1637Display::encodeDigit(uint8_t digit) { return digitToSegment[digit & 0x0f]; }
+uint8_t TM1637Display::encodeDigit(uint8_t digit)
+{
+    return digitToSegment[digit & 0x0f];
+}

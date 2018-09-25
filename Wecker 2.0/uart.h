@@ -20,7 +20,8 @@ LICENSE:
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+    
+
 ************************************************************************/
 
 /**
@@ -64,14 +65,14 @@ LICENSE:
  *  @param  baudRate baudrate in bps, e.g. 1200, 2400, 9600
  */
 #define UART_BAUD_SELECT(baudRate, xtalCpu)                                                        \
-  (((xtalCpu) + 8UL * (baudRate)) / (16UL * (baudRate)) - 1UL)
+    (((xtalCpu) + 8UL * (baudRate)) / (16UL * (baudRate)) - 1UL)
 
 /** @brief  UART Baudrate Expression for ATmega double speed mode
  *  @param  xtalCpu  system clock in Mhz, e.g. 4000000UL for 4Mhz
  *  @param  baudRate baudrate in bps, e.g. 1200, 2400, 9600
  */
 #define UART_BAUD_SELECT_DOUBLE_SPEED(baudRate, xtalCpu)                                           \
-  (((((xtalCpu) + 4UL * (baudRate)) / (8UL * (baudRate)) - 1UL)) | 0x8000)
+    (((((xtalCpu) + 4UL * (baudRate)) / (8UL * (baudRate)) - 1UL)) | 0x8000)
 
 /** @brief  Size of the circular receive buffer, must be power of 2
  *
@@ -161,7 +162,7 @@ extern void uart_putc(unsigned char data);
  */
 extern void uart_puts(const char *s);
 
-extern void uart_putNewLine ();
+extern void uart_putNewLine();
 extern void uart_putUInt16(uint16_t number);
 extern void uart_putUInt32(uint32_t number);
 

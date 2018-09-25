@@ -18,7 +18,7 @@
 
 extern "C"
 {
-  typedef void (*callbackFunction)(void);
+    typedef void (*callbackFunction)(void);
 }
 
 #include <stdint.h>
@@ -26,51 +26,51 @@ extern "C"
 class OneButton
 {
 public:
-  // ----- Constructor -----
-  OneButton(volatile uint8_t *pinAddr, uint8_t pin);
+    // ----- Constructor -----
+    OneButton(volatile uint8_t *pinAddr, uint8_t pin);
 
-  // ----- Set runtime parameters -----
+    // ----- Set runtime parameters -----
 
-  // set # millisec after press is assumed.
-  void setPressTicks(int ticks);
+    // set # millisec after press is assumed.
+    void setPressTicks(int ticks);
 
-  // attach functions that will be called when button was pressed in the specified way.
-  void attachClick(callbackFunction newFunction);
-  void attachLongPressStart(callbackFunction newFunction);
-  void attachLongPressStop(callbackFunction newFunction);
-  void attachDuringLongPress(callbackFunction newFunction);
+    // attach functions that will be called when button was pressed in the specified way.
+    void attachClick(callbackFunction newFunction);
+    void attachLongPressStart(callbackFunction newFunction);
+    void attachLongPressStop(callbackFunction newFunction);
+    void attachDuringLongPress(callbackFunction newFunction);
 
-  // ----- State machine functions -----
+    // ----- State machine functions -----
 
-  // call this function every some milliseconds for handling button events.
-  void tick();
-  bool isLongPressed();
-  uint8_t state;
+    // call this function every some milliseconds for handling button events.
+    void tick();
+    bool isLongPressed();
+    uint8_t state;
 
 private:
-  volatile uint8_t *_pinAddr; // hardware pin address
-  uint8_t _pin;              // hardware pin number
+    volatile uint8_t *_pinAddr; // hardware pin address
+    uint8_t _pin;               // hardware pin number
 
-  uint16_t
-      _pressTicks; // number of ticks that have to pass by before a long button press is detected
-  const uint8_t _debounceTicks = 50; // number of ticks for debounce times.
+    uint16_t
+        _pressTicks; // number of ticks that have to pass by before a long button press is detected
+    const uint8_t _debounceTicks = 50; // number of ticks for debounce times.
 
-  bool _buttonReleased;
-  bool _buttonPressed;
+    bool _buttonReleased;
+    bool _buttonPressed;
 
-  bool _isLongPressed;
+    bool _isLongPressed;
 
-  // These variables will hold functions acting as event source.
-  callbackFunction _clickFunc;
-  callbackFunction _longPressStartFunc;
-  callbackFunction _longPressStopFunc;
-  callbackFunction _duringLongPressFunc;
+    // These variables will hold functions acting as event source.
+    callbackFunction _clickFunc;
+    callbackFunction _longPressStartFunc;
+    callbackFunction _longPressStopFunc;
+    callbackFunction _duringLongPressFunc;
 
-  // These variables that hold information across the upcoming tick calls.
-  // They are initialized once on program start and are updated every time the tick function is
-  // called.
+    // These variables that hold information across the upcoming tick calls.
+    // They are initialized once on program start and are updated every time the tick function is
+    // called.
 
-  unsigned long _startTime; // will be set in state 1
+    unsigned long _startTime; // will be set in state 1
 };
 
 #endif

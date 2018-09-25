@@ -27,32 +27,35 @@ volatile uint16_t timer0_overflows = 0;
 
 void timer0_init()
 {
-  TCCR0B |= (1 << CS01) | (1 << CS00); // Prescaler 64 8Mhz/64 -> 8µs
-  TIMSK0 |= (1 << TOIE0);              // enable overflow interrupt
+    TCCR0B |= (1 << CS01) | (1 << CS00); // Prescaler 64 8Mhz/64 -> 8ï¿½s
+    TIMSK0 |= (1 << TOIE0);              // enable overflow interrupt
 }
 
-uint32_t millis() { return timer0_millis; }
+uint32_t millis()
+{
+    return timer0_millis;
+}
 
 uint32_t micros()
 {
-  return ((uint32_t)(timer0_overflows * (uint32_t)256) + TCNT0) * 8; // 8MHz
+    return ((uint32_t)(timer0_overflows * (uint32_t)256) + TCNT0) * 8; // 8MHz
 }
 
 ISR(TIMER0_OVF_vect)
 {
-  uint32_t m = timer0_millis;
-  uint32_t f = timer0_fract;
+    uint32_t m = timer0_millis;
+    uint32_t f = timer0_fract;
 
-  m += MILLIS_INC;
-  f += FRACT_INC;
-  if (f >= FRACT_MAX)
-  {
-    f -= FRACT_MAX;
-    m += 1;
-  }
+    m += MILLIS_INC;
+    f += FRACT_INC;
+    if (f >= FRACT_MAX)
+    {
+        f -= FRACT_MAX;
+        m += 1;
+    }
 
-  timer0_fract = f;
-  timer0_millis = m;
+    timer0_fract = f;
+    timer0_millis = m;
 
-  timer0_overflows++;
+    timer0_overflows++;
 }

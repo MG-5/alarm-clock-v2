@@ -14,7 +14,8 @@
  @file
  @defgroup pfleury_ic2master I2C Master library
  @code #include <i2cmaster.h> @endcode
-  
+  
+
  @brief I2C (TWI) Master Software Library
 
  Basic routines for communicating with I2C slave devices. This single master
@@ -27,10 +28,14 @@
  implementation.
 
  Use 4.7k pull-up resistor on the SDA and SCL pin.
- 
+ 
+
+
  Adapt the SCL and SDA port and pin definitions and eventually the delay routine in the module
  i2cmaster.S to your target when using the software I2C implementation !
- 
+ 
+
+
  Adjust the  CPU clock frequence F_CPU in twimaster.c or in the Makfile when using the TWI hardware
  implementaion.
 
@@ -39,10 +44,14 @@
     to GNU assembler and AVR-GCC C call interface.
     Replaced the incorrect quarter period delays found in AVR300 with
     half period delays.
-    
+    
+
+
  @author Peter Fleury pfleury@gmx.ch  http://tinyurl.com/peterfleury
  @copyright (C) 2015 Peter Fleury, GNU General Public License Version 3
- 
+ 
+
+
  @par API Usage Example
   The following code shows typical usage of this library, see example test_i2cmaster.c
 
@@ -109,7 +118,9 @@ void i2c_stop(void);
 
 /**
  @brief Issues a start condition and sends address and transfer direction
-  
+  
+
+
  @param    addr address and transfer direction of I2C device
  @retval   0   device accessible
  @retval   1   failed to access device
@@ -127,7 +138,9 @@ unsigned char i2c_rep_start(unsigned char addr);
 
 /**
  @brief Issues a start condition and sends address and transfer direction
-   
+   
+
+
  If device is busy, use ack polling to wait until device ready
  @param    addr address and transfer direction of I2C device
  @return   none
@@ -156,9 +169,13 @@ unsigned char i2c_readNak(void);
 
 /**
  @brief    read one byte from the I2C device
- 
+ 
+
+
  Implemented as a macro, which calls either @ref i2c_readAck or @ref i2c_readNak
- 
+ 
+
+
  @param    ack 1 send ack, request more data from device<br>
                0 send nak, read is followed by a stop condition
  @return   byte read from I2C device

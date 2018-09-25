@@ -1,1 +1,9 @@
-{BasedOnStyle: "LLVM", BreakBeforeBraces: "Allman", ColumnLimit: "100"}
+BasedOnStyle: "LLVM"
+
+AccessModifierOffset: "-4"
+AllowShortFunctionsOnASingleLine: "false"
+BreakBeforeBraces: "Allman"
+ColumnLimit: "100"
+IndentCaseLabels: "true"
+IndentWidth: "4"
+AlwaysBreakTemplateDeclarations: "true"
