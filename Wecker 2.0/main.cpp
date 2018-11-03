@@ -604,7 +604,6 @@ void snooze_longPressStart()
 
 void button1_click()
 {
-    // turnOnLED();
     button1_clicks++;
     prevTime = 0;
 
@@ -667,24 +666,11 @@ void button1_click()
                 alarmMode = AlarmModes::ALARM2_ACTIVE;
                 currentState = States::DISPLAY_ALARM2;
                 break;
-        }
-    }
-    else
-        switch (alarmState)
-        {
-            case AlarmStates::ALARM1_VIBR:
-            case AlarmStates::ALARM2_VIBR:
-                alarmState = AlarmStates::OFF; // Alarm abschalten
-                alarmAttempts = 0;
-                RGB_vector prevColor = LED_lastColor;
-                LED_lastColor.setVector(LED_FINALCOLOR);
-                LED(LED_FINALCOLOR);
-                fadeToColor(prevColor);
-                vibrate(false);
-                vibrState = true;
-                counter = 0;
+
+            default:
                 break;
         }
+    }
 }
 
 void button1_longPressStart()
