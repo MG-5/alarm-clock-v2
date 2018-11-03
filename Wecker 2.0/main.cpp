@@ -22,11 +22,11 @@ Wecker.cpp
 #define UART_BAUD 38400
 
 #define VIBR_PIN PINB4 // Vibrationskissen - B4
-#define IR_PIN PIND2   // IR-Empf�nger - D2
+#define IR_PIN PIND2   // IR-Empfänger - D2
 
 #define LEDSTART 30                  // 30min vorm Klingeln LED-Leiste anschalten
 #define SNOOZETIME 300000            // 5 min
-#define LED_FINALCOLOR 255, 165, 165 // finale Farbe f�r den LED-Sonnenaufgang
+#define LED_FINALCOLOR 255, 165, 165 // finale Farbe für den LED-Sonnenaufgang
 
 TM1637Display tm;
 DS3231 rtc;
@@ -41,7 +41,7 @@ Time alarmTime;
 // Anzeige
 unsigned long prevTime = 0;
 
-//�nderungsgeschwindigkeit bei langem Tastendruck & Vibrieren-Sekundenz�hler
+// Änderungsgeschwindigkeit bei langem Tastendruck & Vibrieren-Sekundenzähler
 unsigned long prevTime2 = 0;
 
 // LED & Vibrieren
@@ -62,7 +62,7 @@ uint8_t alarmAttempts = 0;
 uint8_t counter = 0;
 uint8_t seconds = 0;
 
-volatile uint8_t buttonStates = 0b111; // gespeicherte Zust�nde
+volatile uint8_t buttonStates = 0b111; // gespeicherte Zustände
 volatile uint8_t interruptFlags = 0;   // 0-snooze	1-button1	2-button2	3-RTC
 
 bool blinkState = true; // Doppelpunkt, Alarm-LED, Alarmzeit einstellen
@@ -92,7 +92,7 @@ Switching_States currentSwitch = Switching_States::NO;
 
 int main(void)
 {
-    /******Eing�nge******/
+    /******Eingänge******/
     DDRC &= 0b11110000; // C0:3
     DDRD &= ~(1 << IR_PIN);
 
@@ -100,7 +100,7 @@ int main(void)
     PORTC |= 0b00001111;    // C0:3
     PORTD |= (1 << IR_PIN); // IR receiver
 
-    /******Ausg�nge******/
+    /******Ausgänge******/
     DDRB |= 0b00011110; // B1:4
 
     /*****Interrupts*****/
@@ -495,7 +495,7 @@ int main(void)
 
         LED_effects();
 
-#pragma region Buttoneing�nge �berpr�fen
+#pragma region Buttoneingänge überprüfen
         // snooze
         if (snooze.state != 0)
         {
@@ -581,7 +581,7 @@ void snooze_click()
                 prevTime3 = millis();
                 snoozeState = true;
                 vibrate(false);   // abstellen
-                vibrState = true; // f�r den n�chsten Snooze
+                vibrState = true; // für den nächsten Snooze
                 LED(LED_FINALCOLOR);
                 alarmAttempts = 0;
             }

@@ -38,7 +38,7 @@
 #define REG_AGING 0x10       // Aging Register Address
 #define REG_TEMP 0x11        // Temperature Register Address
 
-#define REG_I2C 0xD0    // DS3231 (Slave) Address 0x68<<1, damit Platz f�r R/W-Bit ist
+#define REG_I2C 0xD0    // DS3231 (Slave) Address 0x68<<1, damit Platz für R/W-Bit ist
 #define REG_ALARM1 0x07 // Alarm 1 Register Address
 #define REG_ALARM2 0x0B // Alarm 2 Register Address
 

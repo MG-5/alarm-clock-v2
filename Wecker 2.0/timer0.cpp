@@ -27,7 +27,7 @@ volatile uint16_t timer0_overflows = 0;
 
 void timer0_init()
 {
-    TCCR0B |= (1 << CS01) | (1 << CS00); // Prescaler 64 8Mhz/64 -> 8�s
+    TCCR0B |= (1 << CS01) | (1 << CS00); // Prescaler 64 8Mhz/64 -> 8µs
     TIMSK0 |= (1 << TOIE0);              // enable overflow interrupt
 }
 

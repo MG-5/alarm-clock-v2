@@ -16,7 +16,7 @@
 #define LED_A2 PIND5         // D5
 #define LED_TURN_ON_OFF_DELAY 3
 
-#define RED_PIN OCR1A   // 9 - B1 - gr�nes Kabel
+#define RED_PIN OCR1A   // 9 - B1 - grünes Kabel
 #define GREEN_PIN OCR2A // 11 - B3 - blaues Kabel
 #define BLUE_PIN OCR1B  // 10 - B2 - rotes Kabel
 

@@ -87,7 +87,7 @@ void poll_IR()
                         fadeToColor(255, 0, 0);
                         break;
 
-                    case 0xA659: // GR�N
+                    case 0xA659: // GRÜN
                         fadeToColor(0, 255, 0);
                         break;
 
@@ -95,7 +95,7 @@ void poll_IR()
                         fadeToColor(0, 0, 255);
                         break;
 
-                    case 0xBB44: // WEI�
+                    case 0xBB44: // WEIß
                         fadeToColor(255, 80, 80);
                         break;
 
