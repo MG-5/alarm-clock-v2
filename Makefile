@@ -60,11 +60,17 @@ ASMFLAGS += -DF_CPU=$(F_CPU)
 ASMFLAGS += -x assembler-with-cpp
 ASMFLAGS += -mmcu=$(MCU)
 
-default: $(PROJECT).elf
-	echo $(OBJECTS)
+.PHONY: clean help show-mcu
+.SECONDARY:
+
+default: $(OUTPUT_DIR)/$(PROJECT).elf
+
+print-%:
+	@echo $*=$($*)
 
 %.elf: $(OBJECTS)
-	$(GCC) $(CFLAGS) $(OBJECTS) --output $@ $(LDFLAGS)
+	@printf "  LD      $@\n"
+	@$(GCC) $(CFLAGS) $(OBJECTS) -o $@ $(LDFLAGS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.$(EXT_C)
 	@printf "  CC      $<\n"
@@ -87,7 +93,7 @@ $(OBJDIR)/%.o : %.$(EXT_ASM)
 	@$(G++) $(ASMFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(PROJECT).elf $(OBJECTS)
+	$(RM) $(OUTPUT_DIR)/$(PROJECT).elf $(OBJECTS)
 
 help:
 	@echo "usage:"
