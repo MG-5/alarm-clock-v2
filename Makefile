@@ -8,13 +8,20 @@ MCU     = atmega328p # see `make show-mcu`
 F_CPU   = 8000000UL
 PROJECT = Wecker-2
 
+#Progammer
+PROGRAMMER = arduino
+PORT = -P/dev/ttyUSB0
+BAUD = -b57600
+
 # ----- These configurations are quite likely not to be changed -----
 
 # Binaries
 GCC     = avr-gcc
 G++     = avr-g++
+OBJCOPY = avr-objcopy
 RM      = rm -f
 AVRDUDE = avrdude
+AVRSIZE = avr-size
 
 # Files
 EXT_C   = c
@@ -60,16 +67,22 @@ ASMFLAGS += -DF_CPU=$(F_CPU)
 ASMFLAGS += -x assembler-with-cpp
 ASMFLAGS += -mmcu=$(MCU)
 
+TARGET=$(OUTPUT_DIR)/$(PROJECT)
+
 .PHONY: clean help show-mcu
 .SECONDARY:
 
-default: $(OUTPUT_DIR)/$(PROJECT).elf
+all: hex
+
+hex: $(TARGET).hex
 
 print-%:
 	@echo $*=$($*)
 
-%.elf: $(OBJECTS)
-	@printf "  LD      $@\n"
+%.hex: %.elf
+	@$(OBJCOPY) -O ihex -j .data -j .text $(TARGET).elf $(TARGET).hex
+
+$(TARGET).elf: $(OBJECTS)
 	@$(GCC) $(CFLAGS) $(OBJECTS) -o $@ $(LDFLAGS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.$(EXT_C)
@@ -126,4 +139,8 @@ config:
 show-mcu:
 	$(G++) --help=target
 
+size:
+	avr-size --mcu=$(MCU) -C $(TARGET).elf
 
+flash: hex
+	avrdude -p$(MCU) $(PORT) $(BAUD) -c$(PROGRAMMER) -Uflash:w:$(TARGET).hex:a
