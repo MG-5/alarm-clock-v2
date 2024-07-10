@@ -5,13 +5,13 @@
 
 # Hardware
 MCU     = atmega328p # see `make show-mcu`
-F_CPU   = 8000000UL
+F_CPU   = 16000000UL
 PROJECT = Wecker-2
 
 #Progammer
 PROGRAMMER = arduino
-PORT = -P/dev/ttyUSB0
-BAUD = -b57600
+PORT = -P/dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_554343437333511141D0-if00 
+BAUD = -b115200
 
 # ----- These configurations are quite likely not to be changed -----
 
@@ -106,7 +106,7 @@ $(OBJDIR)/%.o : %.$(EXT_ASM)
 	@$(G++) $(ASMFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(OUTPUT_DIR)/$(PROJECT).elf $(OBJECTS)
+	$(RM) -rf $(OUTPUT_DIR)
 
 help:
 	@echo "usage:"
